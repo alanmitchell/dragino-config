@@ -1,0 +1,2 @@
+pyserial==3.5
+questionary==2.0.0

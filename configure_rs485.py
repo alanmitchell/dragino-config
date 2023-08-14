@@ -1,71 +1,24 @@
 #!/usr/bin/env python3
-import time
-from pathlib import Path
-from serial import Serial
+"""This script configures a Dragino RS485-LN sensor to retrieve data from a few
+different types of devices supporting the MODBUS RTU serial protocol:
+
+    * Spire T-Mag BTU meter.
+    * Spire EF-40 BTU meter.
+    * Peacefair PZEM-016 electrical power sensor.
+
+Make sure to copy config_example.py to config.py and edit config.py appropriately.
+"""
+import port
 from questionary import select, text
 
-# Port object for Dragino device
-p = None
-
-def open_dev():
-    global p
-    # Find USB COM port
-    com_port = str(list(Path('/dev').glob('ttyUSB*'))[0])
-    p = Serial(com_port, timeout=1.0)
-    return read_all()
-
-def close_dev():
-    p.close()
-
-def read_all(filter=None):
-    resp = ''
-    while True:
-        tstart = time.time()
-        lin = p.readline().decode('utf-8').strip()
-        if time.time() - tstart > p.timeout*0.9 and len(lin) == 0:
-            return resp
-        if len(lin):
-            if filter:
-                do_print = False
-                for substr in filter:
-                    if substr in lin:
-                        do_print = True
-                        break
-            else:
-                do_print = True    
-            if do_print:
-                print(lin)
-        if resp:
-            resp += f'\n{lin}'
-        else:
-            resp = lin
-
-def try_command(cmd, filter=None):
-    for _ in range(2):
-        print('Sending:', cmd)
-        w_cmd = bytes(f'{cmd}\r\n', 'utf-8')
-        p.write(w_cmd)
-        resp = read_all(filter=filter)
-        if "Incorrect" in resp:
-            # not logged in. do that and retry.
-            p.write(bytes('123456\r\n', 'utf-8'))
-            read_all()
-        else:
-            return resp
-
-def set_at(at_cmd, val):
-    p.reset_input_buffer()
-    resp = try_command(f'AT+{at_cmd.upper()}={val}')
-    return resp
+print('\n---------------------------------')
+p = port.Port()
+p.try_command('AT+DEUI=?')
+print('---------------------------------\n')
 
 # Ask for minutes between Transmissions
 mins = text('Enter Minutes between LoRa Transmissions:').ask()
 tdc = int(float(mins) * 60000.)
-
-print('\n---------------------------------')
-open_dev()
-try_command('AT+DEUI=?')
-print('---------------------------------\n')
 
 # data rate
 choices = {
@@ -80,12 +33,13 @@ dr_str = select(
 ).ask()
 dr = choices[dr_str]
 
-p.timeout = 2.0
-# reset to factory defaults
-try_command('AT+FDR')
+p.set_timeout(2.0)
 
-p.timeout=0.5
-set_at('cmdear', '1,9')
+# reset to factory defaults
+p.try_command('AT+FDR')
+
+p.set_timeout(0.5)
+p.set_at('cmdear', '1,9')
 
 # Testing determined that the register addresses in the TMag manual are 0-based
 # so they can be used as-is with the RS485-LN.  Also determined that Function Code
@@ -124,16 +78,16 @@ set_cmds = [
     ] + commands_ef40
 
 for cmd, val in set_cmds:
-    set_at(cmd, val)
+    p.set_at(cmd, val)
 
-p.timeout = 6.0
-try_command('ATZ')
-p.timeout = 1.5
+p.set_timeout(6.0)
+p.try_command('ATZ')
+p.set_timeout(1.5)
 print('--------------------------------------')
 
 keep = (
     'ADR', '+DR', '+TDC', '+VER', 'MBFUN', 'PAYVER', '+CHE', 'COMMAND', 'BAUDR',
 )
-try_command('AT+CFG', filter=keep)
+p.try_command('AT+CFG', filter=keep)
 
-close_dev()
+p.close_port()
