@@ -34,3 +34,4 @@ it to the Dragino device.  They send the entire line at once to the device. Prog
 like Putty send each character as you type it, and if you make a mistakes, you cannot
 correct it as it has already been sent.  Also, CuteCom and YAT keep a history of past
 commands and allow you to retrieve them for reseding, or editing and resending.
+    * Remember that AT commands will not excecute unless the password is entered; the password defaults to "123456".
