@@ -122,7 +122,7 @@ while True:
     for cmd, val in common_cmds + dev_cmds:
         p.set_at(cmd, val)
 
-    p.set_timeout(8.0)
+    p.set_timeout(12.0)
     p.try_command('ATZ')
     p.set_timeout(3.0)
     print('--------------------------------------')
