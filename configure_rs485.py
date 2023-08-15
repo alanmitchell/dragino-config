@@ -44,12 +44,19 @@ commands_pzem = [
 ]
 
 #---------------------
-
+import sys
 import port
 from questionary import select, text
 
+if len(sys.argv) != 2:
+    print('You must provide the name of the Serial Port as a command line parameter.')
+    print('For example:  configure_rs485 COM4')
+    sys.exit()
+
+com_port = sys.argv[1]
+
 # Open the serial port to the Dragino
-p = port.Port()
+p = port.Port(com_port)
 
 ask_for_inputs = True
 

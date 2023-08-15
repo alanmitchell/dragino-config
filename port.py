@@ -1,13 +1,11 @@
 import time
 from pathlib import Path
 from serial import Serial
-import config
-
 
 class Port:
 
-    def __init__(self):
-        self.p = Serial(config.port, timeout=1.0, baudrate=9600)
+    def __init__(self, com_port):
+        self.p = Serial(com_port, timeout=1.0, baudrate=9600)
         print(self.read_all())
 
     def close_port(self):

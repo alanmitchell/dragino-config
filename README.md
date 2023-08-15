@@ -15,18 +15,15 @@ configuration commands.
 
 * For use of the scripts in this repository, a couple intial steps are required:
     * Make sure Python 3.9 or greater is installed.
-    * Change into the directory on your computer containing the repository files. If you did *not* clone the full repo, make sure you at least have the following files: `configure_rs485.py, port.py, config_example.py, requirements.txt`
-    * Copy the `config_example.py` file to `config.py`, which is the file that will
-    actually be used by the configuration script.  Edit the contents of `config.py`
-    appropriately, for example entering the correct identifier for the Serial port where
-    the Dragino sensor is connected.
+    * Change into the directory on your computer containing the repository files. If you did *not* clone the full repo, make sure you at least have the following files: `configure_rs485.py, port.py, requirements.txt`
     * Install the necessary Python libraries by executing `pip install -r requirements.txt`.
 
 * Run the script:
 
     ```
-    python configure_rs485.py
+    python configure_rs485.py <COM port>
     ```
+    where "\<COM port\>" is the name of the serial port, e.g. "COM4".
 * For manual configuration with a Serial Terminal program (without use of this script), 
 programs such as CuteCom (Linux) or YAT (Windows) are easiest to
 use, because they allow you to prepare command (and edit if needed) before sending
