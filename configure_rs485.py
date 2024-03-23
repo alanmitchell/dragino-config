@@ -43,6 +43,16 @@ commands_pzem = [
     ('cmddl1', 1000),
 ]
 
+# Micro820 PLC
+commands_micro820 = [
+    ('payver', 99),
+    ('baudr', 19200),
+    ('command1', '01 01 00 00 00 0c,1'),
+    ('cmddl1', 1000),
+    ('command2', '01 03 00 00 00 28,1'),
+    ('cmddl2', 1000),
+]
+
 #---------------------
 import sys
 import port
@@ -75,6 +85,7 @@ while True:
         choices = {
             'Spire T-Mag BTU Meter': 'tmag',
             'Spire EF40 BTU Meter': 'ef40',
+            'Micro820 PLC': 'micro820',
             'Peacefair PZEM-016 Power Sensor': 'pzem',
         }
         dev_str = select(
@@ -89,11 +100,17 @@ while True:
         tdc = int(float(mins) * 60000.)
 
         # select data rate
-        choices = {
-            'Long Distance (SF9)': 1,
-            'Medium Distance (SF8)': 2,
-            'In Building (SF7)': 3,
-        }
+        if device in ('micro820',):
+            choices = {
+                'Medium Distance (SF8)': 2,
+                'In Building (SF7)': 3,
+            }
+        else:
+            choices = {
+                'Long Distance (SF9)': 1,
+                'Medium Distance (SF8)': 2,
+                'In Building (SF7)': 3,
+            }
         dr_str = select(
             'Select Data Rate for Sensors:',
             choices = [*choices],
