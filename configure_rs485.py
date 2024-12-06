@@ -49,6 +49,7 @@ commands_pzem = [
 ]
 
 # Micro820 PLC
+# Payload version of 99 means fields are already decoded.
 commands_micro820 = [
     ('payver', 99),
     ('baudr', 19200),
@@ -61,14 +62,20 @@ commands_micro820 = [
 # WattNode MODBUS Power Sensor
 # Note that all DIP Switches on the sensor should be in the 0 position except
 # for DIP Switch #1, which should be in the 1 position.
+# This uses Payload version 99 which requires that there be an uplink payload decoder 
+# in the Things console.
 commands_wattnode = [
-    ('payver', 3),
-    ('command1', '01 03 03 f0 00 1a,1'),
+    ('payver', 99),
+    ('command1', '01 03 03 ec 00 02,1'),
     ('cmddl1', 1000),
-    ('command2', '01 03 04 72 00 08,1'),
+    ('command2', '01 03 04 4c 00 06,1'),
     ('cmddl2', 1000),
-    ('command3', '01 03 04 8a 00 06,1'),
+    ('command3', '01 03 03 f0 00 1a,1'),
     ('cmddl3', 1000),
+    ('command4', '01 03 04 72 00 08,1'),
+    ('cmddl4', 1000),
+    ('command5', '01 03 04 8a 00 06,1'),
+    ('cmddl5', 1000),
 ]
 
 #---------------------
