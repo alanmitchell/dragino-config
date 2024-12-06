@@ -4,9 +4,14 @@ different types of devices supporting the MODBUS RTU serial protocol:
 
     * Spire T-Mag BTU meter.
     * Spire EF-40 BTU meter.
+    * Micro820 PLC
+    * WattNode MODBUS Power Sensor, WND-WR-MB
     * Peacefair PZEM-016 electrical power sensor.
 
-Make sure to copy config_example.py to config.py and edit config.py appropriately.
+Run the configuration tool by using the following command:
+
+    python configure_rs485.py <COM port>
+
 """
 
 # These are the list of AT commands needed for each possible MODBUS device. There
@@ -53,6 +58,19 @@ commands_micro820 = [
     ('cmddl2', 1000),
 ]
 
+# WattNode MODBUS Power Sensor
+# Note that all DIP Switches on the sensor should be in the 0 position except
+# for DIP Switch #1, which should be in the 1 position.
+commands_wattnode = [
+    ('payver', 3),
+    ('command1', '01 03 03 f0 00 1a,1'),
+    ('cmddl1', 1000),
+    ('command2', '01 03 04 72 00 08,1'),
+    ('cmddl2', 1000),
+    ('command3', '01 03 04 8a 00 06,1'),
+    ('cmddl3', 1000),
+]
+
 #---------------------
 import sys
 import port
@@ -86,6 +104,7 @@ while True:
             'Spire T-Mag BTU Meter': 'tmag',
             'Spire EF40 BTU Meter': 'ef40',
             'Micro820 PLC': 'micro820',
+            'WattNode MODBUS': 'wattnode',
             'Peacefair PZEM-016 Power Sensor': 'pzem',
         }
         dev_str = select(
@@ -100,7 +119,7 @@ while True:
         tdc = int(float(mins) * 60000.)
 
         # select data rate
-        if device in ('micro820',):
+        if device in ('micro820', 'wattnode'):
             choices = {
                 'Medium Distance (SF8)': 2,
                 'In Building (SF7)': 3,
@@ -152,7 +171,7 @@ while True:
     print('--------------------------------------')
 
     keep = (
-        'ADR', '+DR', '+TDC', '+VER', 'MBFUN', 'PAYVER', '+CHE', 'COMMAND', 'BAUDR',
+        'ADR', '+DR', '+TDC', '+VER', 'MBFUN', 'PAYVER', '+CHE', 'COMMAND', 'BAUDR', 'DEUI', 'APPEUI', 'APPKEY'
     )
     p.try_command('AT+CFG', filter=keep)
 
