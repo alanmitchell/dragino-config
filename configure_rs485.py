@@ -12,6 +12,12 @@ Run the configuration tool by using the following command:
 
     python configure_rs485.py <COM port>
 
+To make a standalone excecutable, run the command:
+
+    pyinstaller -F configure_rs485.py
+
+The excecutable will be in the /dist directory.
+
 """
 
 # These are the list of AT commands needed for each possible MODBUS device. There

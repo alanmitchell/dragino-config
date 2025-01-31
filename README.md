@@ -14,16 +14,23 @@ configuration commands.
     can copy and paste the Dev EUI, App EUI and App Key into the Things setup screen.
 
 * For use of the scripts in this repository, a couple intial steps are required:
-    * Make sure Python 3.9 or greater is installed.
-    * Change into the directory on your computer containing the repository files. If you did *not* clone the full repo, make sure you at least have the following files: `configure_rs485.py, port.py, requirements.txt`
-    * Install the necessary Python libraries by executing `pip install -r requirements.txt`.
+    * Install the `uv` utility for managing Python projects.
+    * Change into the directory on your computer containing the repository files.
 
 * Run the script:
 
     ```
-    python configure_rs485.py <COM port>
+    uv run configure_rs485.py <COM port>
     ```
     where "\<COM port\>" is the name of the serial port, e.g. "COM4".
+
+* For developers: to create a standalone executable of the script, run:
+
+    ```
+    uv run pyinstaller -F configure_rs485.py
+    ```
+    The installer will be found in the /dist directory
+
 * For manual configuration with a Serial Terminal program (without use of this script), 
 programs such as CuteCom (Linux) or YAT (Windows) are easiest to
 use, because they allow you to prepare command (and edit if needed) before sending
